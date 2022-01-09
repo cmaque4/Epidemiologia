@@ -125,18 +125,33 @@ datos <- clean_names(datos)
 datos <-datos %>% rename(merged_header_b = x28)
 
 datos %>% select(date_hospital,date_onset, 
-                 everything()) #la función everything() reordena las columnas de modo
+                 everything()) #la función everything() re ordena las columnas de modo
                                # que las seleccionadas pasan al principio de la y las
-                               # demas manteniendo su mismo orden pasan despues de las
-                               # selecionadas
+                               # demás manteniendo su mismo orden pasan después de las
+                               # seleccionadas
 
-datos %>% select(where(is.character))
+datos %>% select(where(is.character)) # aplica una función where a todas las columnas y 
+                                      # selecciona aquellas que son VERDADERAS de acuerdo
+                                      # a las características de cada variable
+datos %>% select(where(is.numeric))
   
-datos %>% select(contains("date"))
+datos %>% select(contains("date")) # columnas que contienen una cadena de caracteres
+                                   # similares puestos entre los paréntesis
 
-datos %>% select(starts_with("date_"))
-  
-  
-  
-  
-  
+datos %>% select(starts_with("age")) # coincide con un prefijo especificado en la
+                                     # la variable que queremos tener
+
+datos %>% select(ends_with("on")) # coincide con un sufijo especificado
+                                  # de la variable pero lo que esta al final
+
+datos %>% select(matches("onset|hosp|fev")) # esta función matches() funciona de manera
+                                            # similar a contains() 
+
+dos %>% select(num_range("x01:x03"))
+
+names(datos)
+
+file.choose()
+
+dos<-read.xlsx("D:\\Proyectos\\Epidemiologia\\datos\\linelist_raw.xlsx")
+names(dos)  
