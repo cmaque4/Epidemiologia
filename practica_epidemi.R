@@ -107,7 +107,36 @@ pacman::p_load(
   ###############
   ggtree,           # visualization and annotation of trees
   ape,              # analysis of phylogenetics and evolution
-  treeio            # to visualize phylogenetic files
-  
+  treeio,            # to visualize phylogenetic files
+  skimr
 )
 
+#### Importar datos ####
+
+file.choose()
+datos<-read.xlsx("D:\\Proyectos\\Epidemiologia\\datos\\linelist_raw.xlsx")
+
+skim(datos) #para obtener una descripción general de todo el marco de datos 
+
+names(datos)
+
+datos <- clean_names(datos)
+
+datos <-datos %>% rename(merged_header_b = x28)
+
+datos %>% select(date_hospital,date_onset, 
+                 everything()) #la función everything() reordena las columnas de modo
+                               # que las seleccionadas pasan al principio de la y las
+                               # demas manteniendo su mismo orden pasan despues de las
+                               # selecionadas
+
+datos %>% select(where(is.character))
+  
+datos %>% select(contains("date"))
+
+datos %>% select(starts_with("date_"))
+  
+  
+  
+  
+  
