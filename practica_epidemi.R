@@ -141,17 +141,60 @@ datos %>% select(contains("date")) # columnas que contienen una cadena de caract
 datos %>% select(starts_with("age")) # coincide con un prefijo especificado en la
                                      # la variable que queremos tener
 
-datos %>% select(ends_with("on")) # coincide con un sufijo especificado
-                                  # de la variable pero lo que esta al final
+datos %>% 
+  select(ends_with("on")) %>%  # coincide con un sufijo especificado
+  names()                      # de la variable pero lo que esta al final
 
 datos %>% select(matches("onset|hosp|fev")) # esta función matches() funciona de manera
-                                            # similar a contains() 
+                                            # similar a contains() pero da la opción de
+                                            # agregar cadenas separadas por (|) "OR"
 
-dos %>% select(num_range("x01:x03"))
 
-names(datos)
+### Quitar columnas
 
-file.choose()
+datos %>%  
+  select(-c(date_onset, fever:vomit)) %>% 
+  names()
 
-dos<-read.xlsx("D:\\Proyectos\\Epidemiologia\\datos\\linelist_raw.xlsx")
-names(dos)  
+### Selección 
+datos %>% 
+  select(case_id, contains("age")) %>% 
+  names()
+
+# Ahora para seguir vamos a eliminar variables las cuales que no sirven  y vamos a 
+# utilizar la función distinct() la cual borrará las filas que sean duplicadas
+
+nuevo <- datos %>% 
+  clean_names() %>% 
+  select(-c(row_num,merged_header,merged_header_b)) %>% 
+  distinct() # Esta función examina cada fila y redice los datos a solo filas únicas
+             # elimina filas que son 100% duplicadas
+
+# Aquí vamos a agregar nuevas columnas (variables) 
+
+tres <- nuevo %>% 
+  mutate(nueva_var_1 = case_id,
+         nueva_var_2 = 7,
+         nueva_var_3 = nueva_var_2 + 5,
+         nueva_var_4 = str_glue("{hospital} on ({date_onset})"))
+
+# la función transmute() agrega una nueva columna como mutate(), pero también descarta/
+# elimina todas las demás columnas que no están entre los paréntesis 
+
+cuatro <-nuevo %>% 
+  transmute(nueva_variable =str_glue("{hospital} on ({date_onset})"))
+
+# la función group_by() agarra de una base de datos los datos cualitativos y los agrupa
+# de modo que las operaciones que se hagan con summarise() se harán para cada uno de los
+# grupos que definamos
+
+
+nuevo %>% group_by(hospital) %>% summarise(cantidad = n())
+
+iris %>% 
+  group_by(Species) %>% 
+  summarise(media1=mean(Sepal.Width),media2=mean(Petal.Length))
+
+
+
+
