@@ -195,5 +195,76 @@ iris %>%
   summarise(media1=mean(Sepal.Width),media2=mean(Petal.Length))
 
 
+# transformar variables o columnas
+# con la función across() se puede aplicar una transformación a varias columnas
+# a la vez, esta función se utiliza comunalmente dentro de selec(), mutate(), filter(),
+# summarise(). Para esto se especifica las columnas .cols() y las funciones que queremos
+# aplicar a estas variables con .fns(), cualquier argumento adiciona para agregar solo
+# se debe incluir después de la coma aún dentro de across()
 
+
+datos %>% 
+  mutate(across(.cols = c(temp,ht_cm,wt_kg), .fns = as.character)) %>% glimpse()
+ 
+datos %>% 
+  mutate(across(.cols = everything(), .fns = as.character)) %>% glimpse()
+
+datos %>% 
+  mutate(across(.cols = contains("date"), .fns = as.Date)) %>% glimpse()
+
+datos %>% 
+  group_by(outcome) %>% 
+  summarise(across(.cols = c(age,temp,wt_kg,ht_cm),
+                   .fns = mean,
+                   na.rm = TRUE))
+
+datos %>% 
+  group_by(outcome) %>% 
+  summarise(across(.cols = c(age,temp,wt_kg,ht_cm),
+                   .fns = list("media" = mean, "desviación estandar" = sd),
+                   na.rm= TRUE))
+
+datos %>%  
+  group_by(outcome) %>% 
+  summarise(across( .cols = where(is.numeric),
+                    .fns = mean,
+                    na.rn = T))
+
+# Las funciones de tidyselect que puede proporcionar a .cols = para seleccionar columnas
+# everything() - todas las demás columnas no mencionadas
+# last_col() - la última columna
+# where() - aplica una función a todas las columnas y selecciona aquellas que son VERDADERAS
+# starts_with()- coincide con un prefijo especificado. Ejemplo:starts_with("date")
+# ends_with()- coincide con un sufijo especificado. Ejemplo:ends_with("_end")
+# contains()- columnas que contienen una cadena de caracteres. Ejemplo:contains("time")
+# matches()- para aplicar una expresión regular (regex). Ejemplo:contains("[pt]al")
+
+datos %>% 
+  mutate(date_onset = recode(date_onset, "2014-05-13" = "2014-04-15")) %>% head(10)
+                                        # nuevo viejo   # nuevo valor 
+
+
+table(nuevo$hospital, useNA = "always") # con esta función podemos ver los nombres de las
+                                        # columna hospital que debemos cambiar
+
+nuevo <- nuevo %>% 
+  mutate(hospital = recode(hospital,
+                           # recodar la forma de referencia : viejo = nuevo
+                           "Mitylira Hopital"  = "Military Hospital",
+                           "Mitylira Hospital" = "Military Hospital",
+                           "Military Hopital"  = "Military Hospital",
+                           "Port Hopital"      = "Port Hospital",
+                           "Central Hopital"   = "Central Hospital",
+                           "other"             = "Other",
+                           "St. Marks Maternity Hopital (SMMH)" = "St. Mark's Maternity Hospital (SMMH)"
+  ))
+
+table(datos$hospital, useNA = "always")
+table(nuevo$hospital, useNA = "always")
+
+
+datos<- datos %>% 
+  mutate(gender = replace(gender, case_id == "2195", "Female"))
+
+datos$gender[datos$case_id == "2195"] <- "Female"
 
