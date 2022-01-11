@@ -188,7 +188,6 @@ cuatro <-nuevo %>%
 # de modo que las operaciones que se hagan con summarise() se harán para cada uno de los
 # grupos que definamos
 
-
 nuevo %>% group_by(hospital) %>% summarise(cantidad = n())
 
 iris %>% 
